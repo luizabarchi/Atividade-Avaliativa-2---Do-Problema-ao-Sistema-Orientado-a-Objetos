@@ -16,7 +16,21 @@ class Equipamento:
         self.disponibilidade = disponibilidade
 
     def __str__ (self):
-        return f"Equipamento {self.nome}, código {self.identificacao}, Disponível {self.disponibilidade}"
+            estado = "Disponível" if self.disponibilidade else "Emprestado"
+            return f"Equipamento: {self.nome}, código: {self.identificacao}, Situação: {estado}"
+
+    def emprestar(self):
+        if not self.disponibilidade:
+            return False 
+        self.disponibilidade = False
+        return True
+
+    def devolver(self):
+        if self.disponibilidade:
+            return True
+        self.disponibilidade = True 
+        return True
+
 
 class Pessoa(ABC):
     def __init__(self):
@@ -26,11 +40,6 @@ class Pessoa(ABC):
     def limite_emprestimos(self):
         pass
 
-class Aluno(Pessoa):
-    pass
-
-class Servidor(Pessoa):
-    pass
 
 class RegrasEmprestimo:
 
@@ -43,8 +52,6 @@ class RegrasEmprestimo:
         pass
 
 #CLASSES DE COMPORTAMENTO
-
-
 
 if __name__ == "__main__":
     bola = Equipamento("Bola de vôlei", 3, True)
