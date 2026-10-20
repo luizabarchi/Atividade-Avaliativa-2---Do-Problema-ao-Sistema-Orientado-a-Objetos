@@ -10,7 +10,7 @@ from datetime import date, timedelta
 
 class Equipamento:
 
-    def __init__ (self, nome, identificacao, disponibilidade):
+    def __init__ (self, nome, identificacao, disponibilidade=True):
         self.nome = nome
         self.identificacao = identificacao
         self.disponibilidade = disponibilidade
@@ -27,7 +27,7 @@ class Equipamento:
 
     def devolver(self):
         if self.disponibilidade:
-            return True
+            return False
         self.disponibilidade = True 
         return True
 
