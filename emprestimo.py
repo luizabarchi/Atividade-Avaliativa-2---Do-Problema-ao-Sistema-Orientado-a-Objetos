@@ -33,12 +33,29 @@ class Equipamento:
 
 
 class Pessoa(ABC):
-    def __init__(self):
-        pass
+    def __init__(self, registro, nome):
+        self.registro = registro
+        self.nome = nome
+
+    @property #encapsulamento
+    def registro(self):
+        return self.registro
+
+    @property
+    def nome(self):
+        return self.nome
 
     @abstractmethod
-    def limite_emprestimos(self):
+    def categoria(self):
         pass
+    
+
+    @abstractmethod
+    def limites_emprestimos(self):
+        pass
+
+    def __str__(self):
+        return f'Nome:{self.nome} - Categoria:{self.categoria()} - Limites de itens emprestados:{self.limites_emprestimos()}'
 
 
 class RegrasEmprestimo:
