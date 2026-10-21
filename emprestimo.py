@@ -74,13 +74,24 @@ class Servidor(Pessoa):
 
 class RegrasEmprestimo:
 
-    def __init__(self, prazo, quantidadeMax, cuidados):
-        self.prazo = prazo
-        self.quantidadeMax = quantidadeMax
-        self.cuidados = cuidados 
-
     def listar_regras(self):
-        pass
+        aluno = Aluno("0", "exemplo") # o 0 vai para o registro e o exemplo para um nome 
+        servidor = Servidor("0", "exemplo") #evitar escrever 2 e 4
+
+        linhas = ["\nREGRAS DE EMPRÉSTIMO:"]
+
+        linhas.append(f"Aluno: até {aluno.limites_emprestimos()} itens ao mesmo tempo")
+        linhas.append(f"Servidor: até {servidor.limites_emprestimos()} itens ao mesmo tempo")
+        linhas.append("Tempo limite de empréstimo:\n -Bolas e coletes até o fim do dia\n -Raquetes até 2 dias\n -Bicicletas até 7 dias (com vistoria na devolução - pneu, freio e corrente)")
+        linhas.append("Atraso na devolução: caso haja atraso, a pessoa será bloqueado por 1 dia para cada dia de atraso")
+        return "\n".join(linhas)
+
+    def pode_emprestar(self, pessoa, equipamento, quantidadeAtual):
+        if not equipamento.disponibilidade:
+            return False, "Equipamento indisponível"
+        if quantidadeAtual >= pessoa.limites_emprestimos():
+            return False, "Já atingiu o limite de empréstimos"
+        return True, "Empréstimo permitido"
 
 #CLASSES DE COMPORTAMENTO
 
