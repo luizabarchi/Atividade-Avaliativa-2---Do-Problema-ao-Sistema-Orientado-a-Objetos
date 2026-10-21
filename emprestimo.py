@@ -149,6 +149,19 @@ def cadastro(controle_cadastros):
    
    print("Cadastro Concluído\n")
    print(pessoa)
+
+def cadastro_equipamentos(controle_equipamentos):
+    print("Cadastros de novos equipamentos\n")
+    
+    nome = input("Digite o nome do equipamento: ")
+    identificacao = int(input("Digite o código de identificação"))
+
+    novo_equipamento = Equipamento(nome, identificacao, True)    
+    
+    controle_equipamentos.cadastrar_equipamento(novo_equipamento)
+    
+    print("Cadastro concluído\n")
+    print(novo_equipamento)
         
             
 
