@@ -70,7 +70,31 @@ class RegrasEmprestimo:
 
 #CLASSES DE COMPORTAMENTO
 
+class ControleEmprestimo:
+
+    def __init__(self):
+        pass
+
+    def cadastrar_pessoa(self):
+        pass
+
+    def cadastrar_equipamento(self):
+        pass
+
+    def emprestar(self):
+        pass
+
+    def devolver(self):
+        pass
+    
+class PainelEmprestimo:
+    pass
+
+
+class MenuEmprestimo:
+    pass
+
 if __name__ == "__main__":
-    bola = Equipamento("Bola de vôlei", 3, True)
-    print(bola)
+    bola = Equipamento("Bola de vôlei", 3)
+
 
