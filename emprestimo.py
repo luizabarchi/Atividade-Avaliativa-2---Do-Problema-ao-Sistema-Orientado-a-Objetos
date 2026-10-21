@@ -34,16 +34,16 @@ class Equipamento:
 
 class Pessoa(ABC):
     def __init__(self, registro, nome):
-        self.registro = registro
-        self.nome = nome
+        self.__registro = registro
+        self.__nome = nome
 
     @property #encapsulamento
     def registro(self):
-        return self.registro
+        return self.__registro
 
     @property
     def nome(self):
-        return self.nome
+        return self.__nome
 
     @abstractmethod
     def categoria(self):
@@ -56,7 +56,7 @@ class Pessoa(ABC):
 
     def __str__(self):
         return f'Nome:{self.nome} - Categoria:{self.categoria()} - Limites de itens emprestados:{self.limites_emprestimos()}'
-
+    
 class Aluno(Pessoa):
     def categoria(self):
         return "Aluno"
@@ -70,7 +70,6 @@ class Servidor(Pessoa):
     
     def limites_emprestimos(self):
         return 4
-
 
 class RegrasEmprestimo:
 
@@ -98,13 +97,20 @@ class RegrasEmprestimo:
 class ControleEmprestimo:
 
     def __init__(self):
-        pass
+        self.__pessoas = {}
+        self.equipamentos = {}
 
-    def cadastrar_pessoa(self):
-        pass
+    def cadastrar_pessoa(self, pessoa):
+        if pessoa.registro in self.__pessoas:
+            raise ValueError("Esse registro já está cadastrado")
+        self.__pessoas[pessoa.registro] = pessoa
 
-    def cadastrar_equipamento(self):
-        pass
+    def cadastrar_equipamento(self, equipamento):
+        if equipamento.identificacao in self.equipamento:
+            raise ValueError("Esse registro já está cadastrado")
+        
+        self.equipamentos[equipamento.identificacao] = equipamento
+            
 
     def emprestar(self):
         pass
@@ -119,7 +125,37 @@ class PainelEmprestimo:
 class MenuEmprestimo:
     pass
 
+def cadastro(controle_cadastros):
+   print("Cadastro para o empréstimo de equipamentos\n")
+   opcao = int(input("Digite sua categoria:\n1 - Aluno\n2 - Servidor\n"))
+  
+   if opcao != 1 and opcao != 2:
+       print("Opção Inválida!")
+       return
+
+
+   nome = input("Digite seu nome: ")
+   registro = input("Digite seu registro: ")
+  
+   match opcao:
+       case 1:
+        pessoa = Aluno(registro, nome)
+       case 2:
+        pessoa = Servidor(registro, nome)
+       case _:
+        print("Erro inesperado!")
+        
+   controle_cadastros.cadastrar_pessoa(pessoa)
+   
+   print("Cadastro Concluído\n")
+   print(pessoa)
+        
+            
+
+
 if __name__ == "__main__":
     bola = Equipamento("Bola de vôlei", 3)
+    controle_cadastros = ControleEmprestimo()
+    cadastro(controle_cadastros)
 
 
