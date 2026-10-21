@@ -57,6 +57,20 @@ class Pessoa(ABC):
     def __str__(self):
         return f'Nome:{self.nome} - Categoria:{self.categoria()} - Limites de itens emprestados:{self.limites_emprestimos()}'
 
+class Aluno(Pessoa):
+    def categoria(self):
+        return "Aluno"
+        
+    def limites_emprestimos(self):
+        return 2
+        
+class Servidor(Pessoa):
+    def categoria(self):
+        return "Servidor"
+    
+    def limites_emprestimos(self):
+        return 4
+
 
 class RegrasEmprestimo:
 
