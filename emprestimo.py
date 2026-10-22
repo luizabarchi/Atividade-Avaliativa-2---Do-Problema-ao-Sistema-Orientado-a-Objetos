@@ -1,5 +1,5 @@
 
-#Atividade AValiativa 2: Do Problema ao Sistema Orientado a Objetos
+#Atividade Avaliativa 2: Do Problema ao Sistema Orientado a Objetos
 # Classes de dados: Equipamentos, Pessoa (Aluno/Servidor) e Regras
 # Classes de comportamento: Controle, Painel e Empréstimo
 
@@ -47,7 +47,6 @@ class Pessoa(ABC):
     @abstractmethod
     def categoria(self):
         pass
-    
 
     @abstractmethod
     def limites_emprestimos(self):
@@ -91,6 +90,16 @@ class RegrasEmprestimo:
             return False, "Já atingiu o limite de empréstimos"
         return True, "Empréstimo permitido"
 
+    def calcular_limite_data(self, equipamento):
+        nome = equipamento.nome.lower() #evita erro de letra maiúscula
+        if "bicicleta" in nome:
+            dias = 7
+        elif "raquete" in nome:
+            dias = 2
+        else:
+            dias = 0
+        return date.today() + timedelta(days=dias) #calcula o dia que deverá ser entregue
+
 class Emprestimo:
     def __init__(self, pessoa, equipamento, data_limite):
         self.__pessoa = pessoa
@@ -115,10 +124,13 @@ class Emprestimo:
         return self.__data_devolucao
 
     def esta_ativo(self):
-        pass
+        return self.__data_devolucao is None
 
-    def registrar_devolucao(self):
-        pass
+    def registrar_devolucao(self, data=None):
+        if not self.esta_ativo():
+            return False #nesse caso já tinha sido devolvido
+        self.__data_devolucao = data if data else date.today()
+        return True #nesse caso ainda não houve devolução  
 
 #CLASSES DE COMPORTAMENTO
 
@@ -127,6 +139,9 @@ class ControleEmprestimo:
     def __init__(self):
         self.__pessoas = {}
         self.__equipamento = {}
+        self.__emprestimos = []
+        self.__bloqueios = {}
+        self.__regras = RegrasEmprestimo()
 
     def cadastrar_pessoa(self, pessoa):
         if pessoa.registro in self.__pessoas:
@@ -135,15 +150,24 @@ class ControleEmprestimo:
 
     def cadastrar_equipamento(self, equipamento):
         if equipamento.identificacao in self.__equipamento:
-            raise ValueError("Esse registro já está cadastrado")
+            raise ValueError("Esse código de registro já está cadastrado")
         
-        self.__equipamento[equipamento.identificacao] = equipamento
-            
+        self.__equipamento[equipamento.identificacao] = equipamento        
+
     def listar_equipamento(self):
         return list(self.__equipamento.values())
+
+    def listar_emprestimos(self):
+        return list(self.__emprestimos)
     
-    def emprestar(self):
-        pass
+    def emprestar(self, registro, codigo):
+        if registro not in self.__pessoas:
+            raise ValueError("Pessoa não cadastrada")
+        if codigo not in self.__equipamento:
+            raise ValueError("Equipamento não cadastrado")
+
+        pessoa = self.__pessoas[registro]
+        equipamento = self.__equipamento[codigo]
 
     def devolver(self):
         pass
@@ -227,9 +251,9 @@ class MenuEmprestimo:
 
     def __tratar_opcao(self, opcao):
         if opcao == 1:
-            self.__cadastrar_pessoa()
+            cadastro(self.__controle)
         elif opcao == 2:
-            self.__cadastrar_equipamento()
+            cadastro_equipamento(self.__controle)
         elif opcao == 3:
             self.__emprestar()
         elif opcao == 4:
@@ -245,9 +269,9 @@ class MenuEmprestimo:
         else:
             print("Opção inválida!")
 
-        def __historico(self):
-            codigo = int(input("Digite o código do equipamento: "))
-            print(self.__painel.historico_equipamento(codigo))
+    def __historico(self):
+        codigo = int(input("Digite o código do equipamento: "))
+        print(self.__painel.historico_equipamento(codigo))
 
 def cadastro(controle_cadastros):
    print("Cadastro para o empréstimo de equipamentos\n")
@@ -284,7 +308,7 @@ def cadastro_equipamento(controle):
 
     print("Cadastro concluído\n")
     print(novo_equipamento)
-        
+
 if __name__ == "__main__":
     menu = MenuEmprestimo()
     menu.executar()
