@@ -119,8 +119,33 @@ class ControleEmprestimo:
         pass
     
 class PainelEmprestimo:
-    pass
 
+    def __init__(self, controle):
+        self._controle = controle
+
+    def equipamentos_disponiveis(self):
+        linhas = ["\nEQUIPAMENTOS DISPONÍVEIS:"]
+
+        for equipamento in self._controle.listar_equipamentos():
+            if equipamento.disponibilidade:
+                linhas.append(str(equipamento))
+
+        if len(linhas) == 1:
+            linhas.append("Nenhum equipamento disponível no momento\n")
+
+        return "\n".join(linhas)
+
+    def emprestimos_ativos(self):
+        linhas = ["\nEMPRÉSTIMOS ATIVOS:"]
+        for emprestimo in self._controle.listar_emprestimos():
+            if emprestimo.esta_ativo():
+               linhas.append(f"{emprestimo.equipamento.nome}, com {emprestimo.pessoa.nome}, até {emprestimo.data_limite.strftime('%d/%m')}")
+        if len(linhas) == 1:
+            linhas.append("Nenhum empréstimo ativo no momento")
+        return "\n".join(linhas)
+
+    def historico_equipamento(self, codigo):
+        pass
 
 class MenuEmprestimo:
     pass
