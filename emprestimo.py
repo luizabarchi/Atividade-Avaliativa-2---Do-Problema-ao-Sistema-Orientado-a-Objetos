@@ -31,7 +31,6 @@ class Equipamento:
         self.disponibilidade = True 
         return True
 
-
 class Pessoa(ABC):
     def __init__(self, registro, nome):
         self.__registro = registro
@@ -92,6 +91,35 @@ class RegrasEmprestimo:
             return False, "Já atingiu o limite de empréstimos"
         return True, "Empréstimo permitido"
 
+class Emprestimo:
+    def __init__(self, pessoa, equipamento, data_limite):
+        self.__pessoa = pessoa
+        self.__equipamento = equipamento
+        self.__data_limite = data_limite
+        self.__data_devolucao = None #Ao realizar o empréstimo, a pessoa aind anão devolveu
+
+    @property
+    def pessoa (self):
+        return self.__pessoa
+
+    @property
+    def equipamento(self):
+        return self.__equipamento
+
+    @property
+    def data_limite(self):
+        return self.__data_limite
+
+    @property 
+    def data_devolucao(self):
+        return self.__data_devolucao
+
+    def esta_ativo(self):
+        pass
+
+    def registrar_devolucao(self):
+        pass
+
 #CLASSES DE COMPORTAMENTO
 
 class ControleEmprestimo:
@@ -111,7 +139,6 @@ class ControleEmprestimo:
         
         self.__equipamento[equipamento.identificacao] = equipamento
             
-
     def listar_equipamento(self):
         return list(self.__equipamento.values())
     
@@ -148,10 +175,79 @@ class PainelEmprestimo:
         return "\n".join(linhas)
 
     def historico_equipamento(self, codigo):
-        pass
+        linhas = [f"\nHISTÓRICO DO EQUIPAMENTO {codigo}:"]
+        for emprestimo in self._controle.listar_emprestimos():
+            if emprestimo.equipamento.identificacao == codigo:
+                if emprestimo.data_devolucao is None:
+                    situacao = "ainda emprestado"
+                else:
+                    situacao = f"devolvido em {emprestimo.data_devolucao.strftime('%d/%m')}"
+                linhas.append(f"{emprestimo.pessoa.nome}: {situacao}")
+
+        if len(linhas) == 1:
+            linhas.append("Nenhum empréstimo registrado para esse equipamento")
+        return "\n".join(linhas)
 
 class MenuEmprestimo:
-    pass
+    def __init__(self):
+        self.__controle = ControleEmprestimo()
+        self.__painel = PainelEmprestimo(self.__controle)
+        self.__regras = RegrasEmprestimo()
+        self.__cadastrar_equipamentos_iniciais()
+
+    def __cadastrar_equipamentos_iniciais(self):
+        self.__controle.cadastrar_equipamento(Equipamento("Bola de vôlei", 1))
+        self.__controle.cadastrar_equipamento(Equipamento("Raquete de tênis", 2))
+        self.__controle.cadastrar_equipamento(Equipamento("Colete", 3))
+        self.__controle.cadastrar_equipamento(Equipamento("Bicicleta", 4))
+
+    def __mostrar_opcoes(self):
+        print("\nEMPRÉSTIMOS - ATLÉTICA")
+        print("1- Cadastrar um usuário")
+        print("2- Cadastrar um novo equipamento")
+        print("3- Emprestar")
+        print("4 - Devolver")
+        print("5 - Equipamentos disponíveis")
+        print("6 - Empréstimos ativos")
+        print("7 - Histórico de um equipamento")
+        print("8 - Regras")
+        print("0 - Sair")
+
+    def executar(self):
+        while True:
+            self.__mostrar_opcoes()
+            try:
+                opcao = int(input("Escolha uma opção: "))
+                if opcao == 0:
+                    print("Até logo!")
+                    break
+                self.__tratar_opcao(opcao)
+            except ValueError as erro:
+                print(f"Entrada inválida: {erro}")
+
+    def __tratar_opcao(self, opcao):
+        if opcao == 1:
+            self.__cadastrar_pessoa()
+        elif opcao == 2:
+            self.__cadastrar_equipamento()
+        elif opcao == 3:
+            self.__emprestar()
+        elif opcao == 4:
+            self.__devolver()
+        elif opcao == 5:
+            print(self.__painel.equipamento_disponiveis())
+        elif opcao == 6:
+            print(self.__painel.emprestimos_ativos())
+        elif opcao == 7:
+            self.__historico()
+        elif opcao == 8:
+            print(self.__regras.listar_regras())
+        else:
+            print("Opção inválida!")
+
+        def __historico(self):
+            codigo = int(input("Digite o código do equipamento: "))
+            print(self.__painel.historico_equipamento(codigo))
 
 def cadastro(controle_cadastros):
    print("Cadastro para o empréstimo de equipamentos\n")
@@ -160,7 +256,6 @@ def cadastro(controle_cadastros):
    if opcao != 1 and opcao != 2:
        print("Opção Inválida!")
        return
-
 
    nome = input("Digite seu nome: ")
    registro = input("Digite seu registro: ")
@@ -190,11 +285,6 @@ def cadastro_equipamento(controle):
     print("Cadastro concluído\n")
     print(novo_equipamento)
         
-            
-
-
 if __name__ == "__main__":
-    bola = Equipamento("Bola de vôlei", 3)
-    controle = ControleEmprestimo()
-    cadastro(controle)
-    cadastro_equipamento(controle)
+    menu = MenuEmprestimo()
+    menu.executar()
