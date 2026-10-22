@@ -98,7 +98,7 @@ class ControleEmprestimo:
 
     def __init__(self):
         self.__pessoas = {}
-        self.equipamentos = {}
+        self.__equipamento = {}
 
     def cadastrar_pessoa(self, pessoa):
         if pessoa.registro in self.__pessoas:
@@ -106,12 +106,15 @@ class ControleEmprestimo:
         self.__pessoas[pessoa.registro] = pessoa
 
     def cadastrar_equipamento(self, equipamento):
-        if equipamento.identificacao in self.equipamento:
+        if equipamento.identificacao in self.__equipamento:
             raise ValueError("Esse registro já está cadastrado")
         
-        self.equipamentos[equipamento.identificacao] = equipamento
+        self.__equipamento[equipamento.identificacao] = equipamento
             
 
+    def listar_equipamento(self):
+        return list(self.__equipamento.values())
+    
     def emprestar(self):
         pass
 
@@ -123,10 +126,10 @@ class PainelEmprestimo:
     def __init__(self, controle):
         self._controle = controle
 
-    def equipamentos_disponiveis(self):
+    def equipamento_disponiveis(self):
         linhas = ["\nEQUIPAMENTOS DISPONÍVEIS:"]
 
-        for equipamento in self._controle.listar_equipamentos():
+        for equipamento in self._controle.listar_equipamento():
             if equipamento.disponibilidade:
                 linhas.append(str(equipamento))
 
@@ -175,16 +178,15 @@ def cadastro(controle_cadastros):
    print("Cadastro Concluído\n")
    print(pessoa)
 
-def cadastro_equipamentos(controle_equipamentos):
-    print("Cadastros de novos equipamentos\n")
-    
-    nome = input("Digite o nome do equipamento: ")
-    identificacao = int(input("Digite o código de identificação"))
+def cadastro_equipamento(controle):
+    print("Cadastro de novos equipamentos\n")
 
-    novo_equipamento = Equipamento(nome, identificacao, True)    
-    
-    controle_equipamentos.cadastrar_equipamento(novo_equipamento)
-    
+    nome = input("Digite o nome do equipamento: ")
+    identificacao = int(input("Digite o código de identificação: "))
+
+    novo_equipamento = Equipamento(nome, identificacao, True)
+    controle.cadastrar_equipamento(novo_equipamento)
+
     print("Cadastro concluído\n")
     print(novo_equipamento)
         
@@ -193,7 +195,6 @@ def cadastro_equipamentos(controle_equipamentos):
 
 if __name__ == "__main__":
     bola = Equipamento("Bola de vôlei", 3)
-    controle_cadastros = ControleEmprestimo()
-    cadastro(controle_cadastros)
-
-
+    controle = ControleEmprestimo()
+    cadastro(controle)
+    cadastro_equipamento(controle)
