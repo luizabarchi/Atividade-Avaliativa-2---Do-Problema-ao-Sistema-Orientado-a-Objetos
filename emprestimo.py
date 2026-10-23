@@ -384,8 +384,9 @@ def cadastro_equipamento(controle):
 
     tipos = {1: Bola, 2: Raquete, 3: Colete, 4: Bicicleta}
 
-    tipo = int(input("Tipo:\n1 - Bola\n2 - Raquete\n3 - Colete\n4 - Bicicleta\n"))
-    if tipo not in tipos:
+    try:
+     tipo = int(input("Tipo:\n1 - Bola\n2 - Raquete\n3 - Colete\n4 - Bicicleta\n"))
+    except:
         raise ValueError("Tipo inválido. Digite um número de 1 a 4.")
 
     nome = input("Digite o nome do equipamento: ")
